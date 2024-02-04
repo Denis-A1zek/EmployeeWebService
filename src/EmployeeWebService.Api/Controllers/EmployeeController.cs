@@ -4,10 +4,12 @@ using EmployeeWebService.Application.Models;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace EmployeeWebService.Api.Controllers;
 
+/// <summary>
+/// Группа методов для работы с сотрудниками
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/employees")]
@@ -111,8 +113,11 @@ public class EmployeeController : ControllerBase
         ValidationResult result = await _employeeValidator.ValidateAsync(employee);
         if (!result.IsValid)
             return BadRequest(
-                new { errors = result.Errors
-                                    .Select(e => $"{e.PropertyName}: {e.ErrorMessage}") });
+                new
+                {
+                    errors = result.Errors
+                                    .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
+                });
         var employeeId = await _employeeService.CreateEmployeeAsync(employee);
         return Created("employees", employeeId);
     }
@@ -132,7 +137,7 @@ public class EmployeeController : ControllerBase
     ///     }
     /// 
     /// * Обязательно проверяйте правильность введенных данных 
-    /// и поля которые хотите изменить!
+    /// и полей которые хотите изменить!
     /// </remarks>
     /// <param name="id"></param>
     /// <param name="changes"></param>
@@ -166,7 +171,7 @@ public class EmployeeController : ControllerBase
     /// </remarks>
     /// <param name="id">Id сотрудника</param>
     /// <returns></returns>
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesErrorResponseType(typeof(ProblemDetails))]
