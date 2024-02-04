@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  postgres:
+    image: 'postgres:16.1'
+    container_name: employee-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: testPass
+      POSTGRES_USER: testUser
+      POSTGRES_DB: employees
+    volumes:
+      - 'employeedb:/var/lib/postgresql/data'
+    networks:
+      - database
+  
+  web-api:
+    build:
+      context: .
+      dockerfile: src/EmployeeWebService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTP_PORTS=8081
+    ports:
+      - 3500:8080
+      - 5100:8081
+    depends_on:
+      - postgres
+    networks:
+      - database
+
+networks:
+  database:
+volumes:
+  employeedb:
