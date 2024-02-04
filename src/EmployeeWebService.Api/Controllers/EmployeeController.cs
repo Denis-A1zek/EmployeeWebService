@@ -119,7 +119,7 @@ public class EmployeeController : ControllerBase
                                     .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
                 });
         var employeeId = await _employeeService.CreateEmployeeAsync(employee);
-        return Created("employees", employeeId);
+        return Created("employees", new { employeeId = employeeId });
     }
 
     /// <summary>
@@ -157,7 +157,8 @@ public class EmployeeController : ControllerBase
                                         .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
                     });
 
-        return Ok(await _employeeService.UpdateAsync(new EmployeeUpdateModel(id, changes)));
+        var updatedCount = await _employeeService.UpdateAsync(new EmployeeUpdateModel(id, changes));
+        return Ok(new { updated = updatedCount });
     }
 
     /// <summary>
@@ -176,6 +177,9 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesErrorResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> Delete(int id)
-        => Ok(await _employeeService.DeleteEmployeeAsync(id));
+    {
+        var deleted = await _employeeService.DeleteEmployeeAsync(id);
+        return Ok(new { deleted = deleted });
+    }
 
 }
