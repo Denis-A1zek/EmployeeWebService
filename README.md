@@ -57,7 +57,7 @@ catch (Exception)
 
 |Метод| Endpoint (Основные) | Описание |
 |----| ------------- | ------------- |
-|GET| /api/v1/employees |Получить список всех сотрудников (в случае если ни указан ни один из параметров company_id и department_id) |
+|GET| /api/v1/employees |Получить список всех сотрудников (в случае если ни один из параметров <company_id и department_id> не указан) |
 | | /api/v1/employees?company_id=1 | Получить всех сотрудников у которых id компании равен 1 |
 | | /api/v1/employees?department_id=2 | Получить всех сотрудников у которых id отдела равен 2 |
 | | /api/v1/employees?company_id=1&department_id=2 | Комбинируемая версия |
