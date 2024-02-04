@@ -4,30 +4,37 @@
 ![изображение](https://github.com/Denis-A1zek/EmployeeWebService/assets/130150382/e87002e8-3211-43be-93e7-2ebf3fc3bae2)
 
 # Запуск
-## Docker Support
-1. Изменить appsettings.json. Строку подключения к базе даненых.
+Миграция базы данных и добавление тестовых данных происходит автоматически при первом запуске.
+Для отключения этой возможности необходимо удалть код в проекте EmployeWebService.Api в основном классе Program
+~~~ C#
+try
+{
+    var context = app.Services.GetRequiredService<DapperContext>();
+    DatabaseInitializer.Migrate(context);
+    DatabaseInitializer.SeedData(context);
+}
+catch (Exception)
+{
+    app.Services.
+        GetRequiredService<ILogger<Program>>()
+        .LogError("Ошибка при инициализации базы данных");
+}
+~~~
+
+ВАЖНО: В файле appsettings.json заменить строку подключения к БД на вашу
 ~~~ json
 "ConnectionStrings": {
   "SqlConnection": "Server=server_ip;Database=employee;Username=USERNAME;Password=PASSWORD"
 }
 ~~~
-3. Зайти в корневую папку проекта и написать
+## Docker Support
+1. Зайти в корневую папку проекта и написать
    ~~~
    2. docker compose up
    ~~~
-4. Миграция базы данных произойдёте автоматически при первом запуске приложения.
-5. Если не была изменена переменная "ASPNETCORE_ENVIRONMENT=Development" в файле dockercompose.yml, то можно протестировать приложение при помощи Swagger
-
 ## Локально
-1. Установить зависимости PostgreSQL и .NET 8+.
-2. Изменить appsettings.json. Строку подключения к базе даненых.
-~~~ json
-"ConnectionStrings": {
-  "SqlConnection": "Server=server_ip;Database=employee;Username=USERNAME;Password=PASSWORD"
-}
-~~~
-4. Запустить приложения.
-5. Миграция базы данных произойдёте автоматически при первом запуске приложения.
+1. Установить зависимости PostgreSQL 16.1 и .NET 8.
+2. Запустить приложения.
 
 # Технологии
 
@@ -42,6 +49,19 @@
 - FluentValidation 
 
 # Endpoints
-~~~
 
-~~~
+|Метод| Enpoint (Вспомогательные) | Описание |
+|---| ------------- | ------------- |
+|GET| /api/v1/companies  | Получить список всех компаний   |
+|GET| /api/v1/departments  | Получить список всех отделов |
+
+|Метод| Enpoint (Основные) | Описание |
+|----| ------------- | ------------- |
+|GET| /api/v1/employees |Получить список всех сотрудников |
+| | /api/v1/employees?company_id=1 | Получить всех сотрудников у которых id компании равен 1 |
+| | /api/v1/employees?department_id=2 | Получить всех сотрудников у которых id отдела равен 2 |
+| | /api/v1/employees?company_id=1&department_id=2 | Комбинируемая версия |
+|POST| /api/v1/employees |Добавляет нового сотрудника |
+|DELETE| /api/v1/employees/1 |Удалить сотрудника с id равным 1 |
+|GET| /api/v1/employees/1 |Получить сотрудника с id равным 1|
+|PATCH| /api/v1/employees/1 |Частично изменить сотрудника с id равным 1. **Будьте внимательны с обновляемыми полями, указывайте только нужные**|
