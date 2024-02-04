@@ -1,11 +1,11 @@
 # Employee API
 
 Веб-сервис сотрудников
-![изображение](https://github.com/Denis-A1zek/EmployeeWebService/assets/130150382/e87002e8-3211-43be-93e7-2ebf3fc3bae2)
+![изображение](https://github.com/Denis-A1zek/EmployeeWebService/assets/130150382/e9d6d647-abee-4247-9ca8-8c95dfacfa7c)
 
 # Запуск
 Миграция базы данных и добавление тестовых данных происходит автоматически при первом запуске.
-Для отключения этой возможности необходимо удалть код в проекте EmployeWebService.Api в основном классе Program
+Для отключения этой возможности необходимо удалить код в проекте EmployeWebService.Api в основном классе Program
 ~~~ C#
 try
 {
