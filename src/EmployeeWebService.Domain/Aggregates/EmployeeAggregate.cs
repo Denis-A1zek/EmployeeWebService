@@ -2,7 +2,7 @@
 
 namespace EmployeeWebService.Domain.Aggregates;
 
-public record EmployeeAggregate
+public class EmployeeAggregate
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
