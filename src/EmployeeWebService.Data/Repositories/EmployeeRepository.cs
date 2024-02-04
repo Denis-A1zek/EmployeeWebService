@@ -120,15 +120,15 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
 
 
     //TODO
-    public async Task<int> UpdateAsync(IRenewableEmployee updatedEmployee)
+    public async Task<int> UpdateAsync(IRenewableEmployeeField updatedEmployee)
     {
         var fieldsToUpdate = (new List<string> {
-                $"{(updatedEmployee.Name != null ? "name = @Name" : string.Empty)}",
-                $"{(updatedEmployee.Surname != null ? "surname = @Surname" : string.Empty)}",
-                $"{(updatedEmployee.Phone != null ? "phone = @Phone" : string.Empty)}",
-                $"{(updatedEmployee.DepartmentId != null ? "department_id = @DepartmentId" : string.Empty)}",
-                $"{(updatedEmployee.Passport?.Number != null ? "passport_number = @PassportNumber" : string.Empty)}",
-                $"{(updatedEmployee.Passport?.Type != null ? "passport_type = @PassportType" : string.Empty)}"
+                AddField("name", updatedEmployee.Changes.Name),
+                AddField("surname", updatedEmployee.Changes.Surname),
+                AddField("phone", updatedEmployee.Changes.Phone),
+                AddField("department_id", updatedEmployee.Changes.DepartmentId),
+                AddField("passport_number", updatedEmployee.Changes.Passport?.Number),
+                AddField("passport_type", updatedEmployee.Changes.Passport?.Type)
             }).Where(f => f.Length > 1);
         
         string updateQuery = $@"
@@ -139,16 +139,23 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
         ";
 
         DynamicParameters dynamic = new DynamicParameters();
-        dynamic.Add("@Id", updatedEmployee.Id);
-        dynamic.Add("@Name", updatedEmployee.Name);
-        dynamic.Add("@Surname", updatedEmployee.Surname);
-        dynamic.Add("@Phone", updatedEmployee.Phone);
-        dynamic.Add("@PassportType", updatedEmployee.Passport?.Type);
-        dynamic.Add("@PassportNumber", updatedEmployee.Passport?.Number);
-        dynamic.Add("@DepartmentId", updatedEmployee.DepartmentId);
+        dynamic.Add("@id", updatedEmployee.EmployeeId);
+        dynamic.Add("@name", updatedEmployee.Changes.Name);
+        dynamic.Add("@surname", updatedEmployee.Changes.Surname);
+        dynamic.Add("@phone", updatedEmployee.Changes.Phone);
+        dynamic.Add("@passport_type", updatedEmployee.Changes.Passport?.Type);
+        dynamic.Add("@passport_number", updatedEmployee.Changes.Passport?.Number);
+        dynamic.Add("@department_id", updatedEmployee.Changes.DepartmentId);
 
         using var connection = Context.CreateConnection();
         return await connection.ExecuteAsync(updateQuery, dynamic);
+    }
+
+
+
+    private string AddField(string fieldName, object? value)
+    {
+        return value != null ? $"{fieldName} = @{fieldName}" : string.Empty;
     }
 
     private DynamicParameters GetDynamicParamsFromEmployee(Employee employee)
@@ -162,5 +169,4 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
         dynamic.Add("@DepartmentId", employee.DepartmentId);
         return dynamic;
     }
-
 }

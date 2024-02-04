@@ -3,12 +3,24 @@ using EmployeeWebService.Domain.Interfaces;
 
 namespace EmployeeWebService.Application.Models;
 
-public class EmployeeUpdateModel : IRenewableEmployee
+public class EmployeeUpdateModel : IRenewableEmployeeField
 {
-    public int Id { get; set; }
-    public string? Name { get; set; } = null;
-    public string? Surname { get; set; } = null;
-    public string? Phone { get; set; } = null;
-    public int? DepartmentId { get; set; } = null;
-    public Passport? Passport { get; set; } = null;
+    public EmployeeUpdateModel(int employeeId, IEmployeeFieldChanges changes)
+    {
+        EmployeeId = employeeId;
+        Changes = changes;
+    }
+
+    public int EmployeeId { get; set; }
+    public IEmployeeFieldChanges Changes { get; set; }
+}
+
+
+public class EmployeeFieldChanges : IEmployeeFieldChanges
+{
+    public string? Name { get; set; }
+    public string? Surname { get; set; }
+    public string? Phone { get; set; }
+    public int? DepartmentId { get; set; }
+    public Passport? Passport { get; set; }
 }

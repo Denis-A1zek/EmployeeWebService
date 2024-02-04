@@ -1,6 +1,5 @@
 ﻿using EmployeeWebService.Application;
 using EmployeeWebService.Application.Models;
-using EmployeeWebService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeWebService.Api.Controllers;
@@ -16,17 +15,17 @@ public class EmployeeController : ControllerBase
         _employeeService = employeeService;
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(EmployeeUpdateModel employee)
-    {
-        var d = await _employeeService.UpdateAsync(employee);
-        return Ok(d);
+    [HttpPatch("{id:int}")]
+    public async Task<IActionResult> Update(int id, EmployeeFieldChanges changes)
+    { 
+        return Ok(await _employeeService.UpdateAsync(new EmployeeUpdateModel(id, changes));
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll(int? companyId, int? departmentId)
     {
-        if (companyId is null & departmentId is null) return Ok(await _employeeService.GetEmployeesAsync());
+        if (companyId is null & departmentId is null) 
+            return Ok(await _employeeService.GetEmployeesAsync());
 
         return Ok(await _employeeService.GetEmployeesByFilterAsync(new EmployeeQuery()
         {
