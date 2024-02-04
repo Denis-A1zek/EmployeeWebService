@@ -10,7 +10,7 @@ internal class CompanyRepository : BaseRepository, ICompanyRepository
     {
     }
 
-    public async Task<IReadOnlyCollection<Company>> GetCompanies()
+    public async Task<IReadOnlyCollection<Company>> GetCompaniesAsync()
     {
         var query = "SELECT * FROM companies";
         using var connection = Context.CreateConnection();
