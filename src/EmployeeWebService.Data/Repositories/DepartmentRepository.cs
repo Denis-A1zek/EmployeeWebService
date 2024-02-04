@@ -10,6 +10,17 @@ public class DepartmentRepository : BaseRepository, IDepartmentRepository
     public DepartmentRepository
         (DapperContext context) : base(context) { }
 
+    public async Task<Department> GetDepartmentByIdAsync(int id)
+    {
+        var query = """
+            SELECT * FROM departments WHERE id = @Id
+            """;
+        
+        using var connection = Context.CreateConnection();
+        var department = await connection.QueryFirstOrDefaultAsync<Department>(query, new { id });
+        return department;
+    }
+
     public async Task<IReadOnlyCollection<DepartmentAggregate>> GetDepartmentsAsync()
     {
         var query = $"""

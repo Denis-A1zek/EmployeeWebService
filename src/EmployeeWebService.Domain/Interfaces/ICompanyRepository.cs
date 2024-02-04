@@ -4,5 +4,5 @@ namespace EmployeeWebService.Domain;
 
 public interface ICompanyRepository
 {
-    Task<IReadOnlyCollection<Company>> GetCompanies();
+    Task<IReadOnlyCollection<Company>> GetCompaniesAsync();
 }
