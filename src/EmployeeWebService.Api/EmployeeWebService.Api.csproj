@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\EmployeeWebService.Application\EmployeeWebService.Application.csproj" />
+    <ProjectReference Include="..\EmployeeWebService.Data\EmployeeWebService.Data.csproj" />
   </ItemGroup>
 
 </Project>
