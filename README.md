@@ -1,6 +1,7 @@
 # Employee API
 
 Веб-сервис сотрудников
+![изображение](https://github.com/Denis-A1zek/EmployeeWebService/assets/130150382/e87002e8-3211-43be-93e7-2ebf3fc3bae2)
 
 # Запуск
 ## Docker Support
