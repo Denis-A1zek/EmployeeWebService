@@ -34,7 +34,7 @@
 - ASP .NET Core Web API
 - PostgreSQL
 
-## Библиотеки
+### Библиотеки
 
 - Dapper
 - Npgsql.EntityFrameworkCore.PostgreSQL
