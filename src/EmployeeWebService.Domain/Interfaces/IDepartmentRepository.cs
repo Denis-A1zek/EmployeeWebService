@@ -1,10 +1,10 @@
 ﻿using EmployeeWebService.Domain.Aggregates;
 using EmployeeWebService.Domain.Entities;
+using EmployeeWebService.Domain.Interfaces;
 
 namespace EmployeeWebService.Domain;
 
-public interface IDepartmentRepository
+public interface IDepartmentRepository : IBaseRepository
 {
-    Task<Department> GetDepartmentByIdAsync(int id);
     Task<IReadOnlyCollection<DepartmentAggregate>> GetDepartmentsAsync();
 }

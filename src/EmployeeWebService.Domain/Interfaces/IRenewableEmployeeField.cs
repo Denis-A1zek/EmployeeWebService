@@ -14,6 +14,7 @@ public interface IEmployeeFieldChanges
     public string? Surname { get; set; }
     public string? Phone { get; set; }
     public int? DepartmentId { get; set; }
-    public Passport? Passport { get; set; }
+    public string? PassportType { get; set; }
+    public string? PassportNumber { get; set; }
 }
 
