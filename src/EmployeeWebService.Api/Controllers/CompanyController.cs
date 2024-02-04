@@ -1,10 +1,12 @@
-﻿using EmployeeWebService.Domain;
+﻿using Asp.Versioning;
+using EmployeeWebService.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeWebService.Api.Controllers;
 
 [ApiController]
-[Route("api/companies")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/companies")]
 public class CompanyController : ControllerBase
 {
     private readonly ICompanyRepository _companyRepository;
@@ -14,10 +16,17 @@ public class CompanyController : ControllerBase
         _companyRepository = companyRepository;
     }
 
+    /// <summary>
+    /// Получить компании
+    /// </summary>
+    /// <remarks>
+    /// GET
+    /// 
+    ///     /api/v1/companies
+    /// 
+    /// </remarks>
+    /// <returns>Список компаний</returns>
     [HttpGet]
     public async Task<IActionResult> GetAll()
-    {
-        var companies = await _companyRepository.GetCompaniesAsync();
-        return Ok(companies);
-    }
+        => Ok(await _companyRepository.GetCompaniesAsync());
 }
