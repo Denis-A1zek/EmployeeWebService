@@ -2,10 +2,10 @@
 
 namespace EmployeeWebService.Application.Models;
 
-public class EmployeeModel
+public class EmployeeModel 
 {
-    public string Name { get; set; } 
-    public string Surname { get; set; } 
+    public string Name { get; set; }  
+    public string Surname { get; set; }
     public string Phone { get; set; }
     public int DepartmentId { get; set; }
     public string PassportType { get; set; }

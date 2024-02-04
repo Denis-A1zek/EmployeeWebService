@@ -42,7 +42,8 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
     }
 
 
-    public async Task<IEnumerable<EmployeeAggregate>> GetEmployesByFilter(int? companyId, int? departmentId)
+    public async Task<IEnumerable<EmployeeAggregate>> GetEmployesByFilter
+        (int? companyId, int? departmentId)
     {
         var query = $@"
             SELECT 
@@ -118,17 +119,15 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
         return departments.ToList();
     }
 
-
-    //TODO
-    public async Task<int> UpdateAsync(IRenewableEmployee updatedEmployee)
+    public async Task<int> UpdateAsync(IRenewableEmployeeField updatedEmployee)
     {
         var fieldsToUpdate = (new List<string> {
-                $"{(updatedEmployee.Name != null ? "name = @Name" : string.Empty)}",
-                $"{(updatedEmployee.Surname != null ? "surname = @Surname" : string.Empty)}",
-                $"{(updatedEmployee.Phone != null ? "phone = @Phone" : string.Empty)}",
-                $"{(updatedEmployee.DepartmentId != null ? "department_id = @DepartmentId" : string.Empty)}",
-                $"{(updatedEmployee.Passport?.Number != null ? "passport_number = @PassportNumber" : string.Empty)}",
-                $"{(updatedEmployee.Passport?.Type != null ? "passport_type = @PassportType" : string.Empty)}"
+                AddField("name", updatedEmployee.Changes.Name),
+                AddField("surname", updatedEmployee.Changes.Surname),
+                AddField("phone", updatedEmployee.Changes.Phone),
+                AddField("department_id", updatedEmployee.Changes.DepartmentId),
+                AddField("passport_number", updatedEmployee.Changes.PassportNumber),
+                AddField("passport_type", updatedEmployee.Changes.PassportType)
             }).Where(f => f.Length > 1);
         
         string updateQuery = $@"
@@ -139,16 +138,23 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
         ";
 
         DynamicParameters dynamic = new DynamicParameters();
-        dynamic.Add("@Id", updatedEmployee.Id);
-        dynamic.Add("@Name", updatedEmployee.Name);
-        dynamic.Add("@Surname", updatedEmployee.Surname);
-        dynamic.Add("@Phone", updatedEmployee.Phone);
-        dynamic.Add("@PassportType", updatedEmployee.Passport?.Type);
-        dynamic.Add("@PassportNumber", updatedEmployee.Passport?.Number);
-        dynamic.Add("@DepartmentId", updatedEmployee.DepartmentId);
+        dynamic.Add("@id", updatedEmployee.EmployeeId);
+        dynamic.Add("@name", updatedEmployee.Changes.Name);
+        dynamic.Add("@surname", updatedEmployee.Changes.Surname);
+        dynamic.Add("@phone", updatedEmployee.Changes.Phone);
+        dynamic.Add("@passport_type", updatedEmployee.Changes.PassportType);
+        dynamic.Add("@passport_number", updatedEmployee.Changes.PassportNumber);
+        dynamic.Add("@department_id", updatedEmployee.Changes.DepartmentId);
 
         using var connection = Context.CreateConnection();
         return await connection.ExecuteAsync(updateQuery, dynamic);
+    }
+
+
+
+    private string AddField(string fieldName, object? value)
+    {
+        return value != null ? $"{fieldName} = @{fieldName}" : string.Empty;
     }
 
     private DynamicParameters GetDynamicParamsFromEmployee(Employee employee)
@@ -163,4 +169,41 @@ internal class EmployeeRepository : BaseRepository, IEmployeeRepository
         return dynamic;
     }
 
+    public async Task<EmployeeAggregate?> GetById(int id)
+    {
+        var query = $"""
+            SELECT 
+                e.id, 
+                e.name, 
+                e.surname, 
+                e.phone, 
+                e.passport_type as {nameof(EmployeeAggregate.Passport.Type)}, 
+                e.passport_number as {nameof(EmployeeView.Passport.Number)}, 
+                d.name AS {nameof(EmployeeAggregate.Department.Name)}, 
+                d.phone AS {nameof(EmployeeAggregate.Department.Phone)}, 
+                c.id AS Id
+            FROM 
+                public.employees e
+            JOIN 
+                departments d ON d.id = e.department_id
+            JOIN 
+                companies c ON d.company_id = c.id
+            WHERE e.id = @id
+            """;
+
+        using var connection = Context.CreateConnection();
+
+        var employee = await connection.QueryAsync<EmployeeAggregate, Passport, Department, Company, EmployeeAggregate>(
+            query,
+            map: (employee, passport, department, company) =>
+            {
+                employee.Passport = passport;
+                employee.Department = department;
+                employee.CompanyId = company.Id;
+                return employee;
+            },
+            param: new { id },
+            splitOn: "Type, Name, Id");
+        return employee.FirstOrDefault();
+    }
 }
