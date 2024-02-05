@@ -45,7 +45,7 @@ catch (Exception)
 ### Библиотеки
 
 - Dapper
-- Npgsql.EntityFrameworkCore.PostgreSQL
+- Npgsql
 - FluentValidation 
 
 # Endpoints
